@@ -5,6 +5,9 @@ import {
   ComponentMap,
   PackageRouteConfig,
 } from "@skyslit/ark-react/build/types";
+import HomePageView from "./views/HomePage.view.";
+import NoSearchResultView from "./views/NoSearchResult.view";
+import ProductPageView from "./views/ProductPage.view";
 
 export type Movie = {
   title: string;
@@ -58,6 +61,9 @@ export default class DefaultModule extends ArkModule<StateType, "Main"> {
 
   views: ComponentMap = {
     StarterPage: StarterPageView,
+    HomePage: HomePageView,
+    NoSearchResultPage: NoSearchResultView,
+    ProductPage: ProductPageView,
   };
 
   controller = {
@@ -105,6 +111,21 @@ export default class DefaultModule extends ArkModule<StateType, "Main"> {
 
   getDefaultRoutes(): PackageRouteConfig[] {
     return [
+      {
+        path: "/product",
+        exact: true,
+        component: this.views.ProductPage,
+      },
+      {
+        path: "/no-search-result",
+        exact: true,
+        component: this.views.NoSearchResultPage,
+      },
+      {
+        path: "/home-page",
+        exact: true,
+        component: this.views.HomePage,
+      },
       {
         path: "/",
         exact: true,
