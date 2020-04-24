@@ -33,3 +33,12 @@
     }
   }
 }
+.product-img-wrapper {
+  width: 200px;
+  @include media-breakpoint-down(md) {
+    width: 150px;
+  }
+  @include media-breakpoint-down(sm) {
+    width: 130px;
+  }
+}

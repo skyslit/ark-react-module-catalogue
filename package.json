@@ -3,8 +3,8 @@
   "version": "0.1.2",
   "private": true,
   "dependencies": {
-    "@skyslit/ark-react": "1.0.10",
-    "@skyslit/ark-react-scripts": "3.4.9",
+    "@skyslit/ark-react": "1.0.11",
+    "@skyslit/ark-react-scripts": "3.4.10",
     "axios": "^0.19.2",
     "i18next": "^19.4.0",
     "jquery": "^3.4.1",
