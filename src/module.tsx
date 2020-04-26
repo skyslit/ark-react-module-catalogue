@@ -9,7 +9,6 @@ import HomePageView from "./views/HomePage.view.";
 import NoSearchResultView from "./views/NoSearchResult.view";
 import CatalogueDetailsPageView from "./views/CatalogueDetails.view";
 import FilterPageView from "./views/FilterPage.view";
-
 export type Movie = {
   title: string;
   actor: string;
@@ -26,8 +25,9 @@ export type StateType = {
   messageToDisplay: string;
   movies: Movie[];
   isLoading: boolean;
-  hasHomePageIntialized: boolean;
+  hasHomePageInitialized: boolean;
   featuredItems: CatalogueItem[];
+  hasCatalogueDetailsInitialized: boolean;
   catalogueFeaturedItem: CatalogueItem;
 };
 
@@ -128,61 +128,89 @@ export default class DefaultModule extends ArkModule<StateType, "Main"> {
           alert("API Call error");
         });
     },
-    populateHome: () => {
-      this.services
-        .fetchHome()
-        .then((CatalogueItems: any) => {
-          this.dispatch({
-            type: this.actionTypes.POPULATE_FEATURED_ITEMS,
-            payload: {
-              value: CatalogueItems,
-            },
-          });
+    populateHome: (force?: boolean) => {
+      force = force ? force : false;
+      return new Promise((resolve, reject) => {
+        if (
+          this.getState().hasHomePageInitialized === false ||
+          force === true
+        ) {
           this.dispatch({
             type: this.actionTypes.SET_IS_LOADING,
-            payload: { value: false },
-          });
-          this.dispatch({
-            type: this.actionTypes.SET_HAS_HOME_PAGE_INITIALISED,
             payload: { value: true },
           });
-        })
-        .catch(() => {
-          this.dispatch({
-            type: this.actionTypes.SET_IS_LOADING,
-            payload: { value: false },
-          });
-          this.showError("Network error", "Unable to fetch home page", true);
-        });
-    },
-    populateCatalogueItemByHandler: (handler: string) => {
-      this.dispatch({
-        type: this.actionTypes.SET_IS_LOADING,
-        payload: { value: true },
+          this.services
+            .fetchHome()
+            .then((catalogueItems: any) => {
+              this.dispatch({
+                type: this.actionTypes.POPULATE_FEATURED_ITEMS,
+                payload: {
+                  value: catalogueItems,
+                },
+              });
+              this.dispatch({
+                type: this.actionTypes.SET_IS_LOADING,
+                payload: { value: false },
+              });
+              this.dispatch({
+                type: this.actionTypes.SET_HAS_HOME_PAGE_INITIALISED,
+                payload: { value: true },
+              });
+              resolve(catalogueItems);
+            })
+            .catch((err) => {
+              this.dispatch({
+                type: this.actionTypes.SET_IS_LOADING,
+                payload: { value: false },
+              });
+              this.showError(
+                "Network error",
+                "Unable to fetch home page",
+                true
+              );
+              reject(err);
+            });
+        } else {
+          resolve(true);
+        }
       });
-      this.services
-        .fetchCatalogueItemByHandler(handler)
-        .then((response: any) => {
-          console.log("anandhu");
-          this.dispatch({
-            type: this.actionTypes.POPULATE_CATALOGUE_ITEM_BY_HANDLER,
-            payload: {
-              value: response,
-            },
-          });
+    },
+    populateCatalogueItemByHandler: (handler: string, force?: boolean) => {
+      return new Promise((resolve, reject) => {
+        if (
+          this.getState().hasCatalogueDetailsInitialized === false ||
+          force === true
+        ) {
           this.dispatch({
             type: this.actionTypes.SET_IS_LOADING,
-            payload: { value: false },
+            payload: { value: true },
           });
-        })
-        .catch((err) => {
-          console.log("heloooo");
-          this.dispatch({
-            type: this.actionTypes.SET_IS_LOADING,
-            payload: { value: false },
-          });
-          alert("API Call error");
-        });
+          this.services
+            .fetchCatalogueItemByHandler(handler)
+            .then((response: any) => {
+              this.dispatch({
+                type: this.actionTypes.POPULATE_CATALOGUE_ITEM_BY_HANDLER,
+                payload: {
+                  value: response,
+                },
+              });
+              this.dispatch({
+                type: this.actionTypes.SET_IS_LOADING,
+                payload: { value: false },
+              });
+              resolve(response);
+            })
+            .catch((err) => {
+              this.dispatch({
+                type: this.actionTypes.SET_IS_LOADING,
+                payload: { value: false },
+              });
+              reject(err);
+            });
+        } else {
+          resolve(true);
+        }
+      });
     },
   };
 
@@ -229,8 +257,9 @@ export default class DefaultModule extends ArkModule<StateType, "Main"> {
     messageToDisplay: "Hello World",
     movies: [],
     isLoading: true,
-    hasHomePageIntialized: false,
+    hasHomePageInitialized: false,
     featuredItems: [],
+    hasCatalogueDetailsInitialized: false,
     catalogueFeaturedItem: null,
   };
 

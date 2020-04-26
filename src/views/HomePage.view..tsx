@@ -8,20 +8,18 @@ class HomePageView extends React.Component<
   ViewComponentPropType<DefaultModule>
 > {
   componentDidMount() {
-    if (this.props.context.hasHomePageIntialized === false) {
-      this.props.module.controller.populateHome();
-    }
+    this.props.module.controller.populateHome();
   }
   render() {
     console.log(this.props.context.featuredItems);
 
-    // if (this.props.context.isLoading === true) {
-    //   return(
-    //     <div>
-    //       <i className="fas fa-spin fa-circle-notch"></i>
-    //     </div>
-    //   );
-    // }
+    if (this.props.context.isLoading === true) {
+      return (
+        <div>
+          <i className="fas fa-spin fa-circle-notch"></i>
+        </div>
+      );
+    }
     return (
       <>
         <Helmet>

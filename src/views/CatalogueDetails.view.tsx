@@ -2,6 +2,7 @@ import React from "react";
 import { ViewComponentPropType } from "@skyslit/ark-react";
 import { Helmet } from "react-helmet-async";
 import DefaultModule from "../module";
+import PageNotFound from "../components/PageNotFound";
 
 class CatalogueDetailsPageView extends React.Component<
   ViewComponentPropType<DefaultModule>
@@ -20,6 +21,15 @@ class CatalogueDetailsPageView extends React.Component<
         </div>
       );
     }
+
+    if (!this.props.context.catalogueFeaturedItem) {
+      return (
+        <div>
+          <PageNotFound />
+        </div>
+      );
+    }
+
     return (
       <>
         <Helmet>
@@ -39,7 +49,10 @@ class CatalogueDetailsPageView extends React.Component<
                   <div className="col-lg-8 pl-sm-5 pt-5 pt-lg-0">
                     <div className="row">
                       <div className="col-sm-6 order-1 text-center text-sm-left">
-                        <h5 className="font-weight-bold">
+                        <h5
+                          id="catalogue-fetaured-item-title"
+                          className="font-weight-bold"
+                        >
                           {this.props.context.catalogueFeaturedItem &&
                             this.props.context.catalogueFeaturedItem.title}
                         </h5>
