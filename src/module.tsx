@@ -21,6 +21,13 @@ export type CatalogueItem = {
   tags: Array<string>;
 };
 
+export type FilterOption = {
+  keyword: string;
+  tag: string[];
+  maxItemsPerFetch: number;
+  hasMoreResults: boolean;
+};
+
 export type StateType = {
   messageToDisplay: string;
   movies: Movie[];
@@ -29,6 +36,9 @@ export type StateType = {
   featuredItems: CatalogueItem[];
   hasCatalogueDetailsInitialized: boolean;
   catalogueFeaturedItem: CatalogueItem;
+  filter: FilterOption;
+  filterResults: CatalogueItem[];
+  hasFilterResultInitialized: boolean;
 };
 
 export default class DefaultModule extends ArkModule<StateType, "Main"> {
@@ -78,6 +88,30 @@ export default class DefaultModule extends ArkModule<StateType, "Main"> {
               hasHomePageIntialized: value,
             });
           }
+          case this.actionTypes.SET_HAS_CATALOGUE_FEATURE_ITEM_INITIALIZED: {
+            const { value } = action.payload;
+            return Object.assign({}, state, {
+              hasCatalogueDetailsInitialized: value,
+            });
+          }
+          case this.actionTypes.SET_FILTER_RESULTS: {
+            const { value } = action.payload;
+            return Object.assign({}, state, {
+              filterResults: [...state.filterResults, ...value],
+            });
+          }
+          case this.actionTypes.SET_FILTER_OPTIONS: {
+            const { value } = action.payload;
+            return Object.assign({}, state, {
+              filter: value,
+            });
+          }
+          case this.actionTypes.SET_HAS_FILTER_RESULTS_INITIALIZED: {
+            const { value } = action.payload;
+            return Object.assign({}, state, {
+              hasFilterResultInitialized: value,
+            });
+          }
           default: {
             return state;
           }
@@ -97,6 +131,11 @@ export default class DefaultModule extends ArkModule<StateType, "Main"> {
     POPULATE_CATALOGUE_ITEM_BY_HANDLER: "POPULATE_CATALOGUE_ITEM_BY_HANDLER",
     SET_IS_LOADING: "SET_IS_LOADING",
     SET_HAS_HOME_PAGE_INITIALISED: "SET_HAS_HOME_PAGE_INITIALISED",
+    SET_HAS_CATALOGUE_FEATURE_ITEM_INITIALIZED:
+      "SET_HAS_CATALOGUE_FEATURE_ITEM_INITIALIZED",
+    SET_FILTER_RESULTS: "SET_FILTER_RESULTS",
+    SET_FILTER_OPTIONS: "SET_FILTER_OPTIONS",
+    SET_HAS_FILTER_RESULTS_INITIALIZED: "SET_HAS_FILTER_RESULTS_INITIALIZED",
   };
 
   views: ComponentMap = {
@@ -198,9 +237,70 @@ export default class DefaultModule extends ArkModule<StateType, "Main"> {
                 type: this.actionTypes.SET_IS_LOADING,
                 payload: { value: false },
               });
+              this.dispatch({
+                type: this.actionTypes
+                  .SET_HAS_CATALOGUE_FEATURE_ITEM_INITIALIZED,
+                payload: { value: true },
+              });
               resolve(response);
             })
             .catch((err) => {
+              this.dispatch({
+                type: this.actionTypes.SET_IS_LOADING,
+                payload: { value: false },
+              });
+              reject(err);
+            });
+        } else {
+          resolve(true);
+        }
+      });
+    },
+
+    updateFilterOption: (value: FilterOption) => {
+      this.dispatch({
+        type: this.actionTypes.SET_FILTER_OPTIONS,
+        payload: {
+          value,
+        },
+      });
+    },
+    populateResults: (force?: boolean) => {
+      return new Promise((resolve, reject) => {
+        if (
+          this.getState().hasFilterResultInitialized === false ||
+          force === true
+        ) {
+          console.log("helo1");
+          this.dispatch({
+            type: this.actionTypes.SET_IS_LOADING,
+            payload: { value: true },
+          });
+          this.services
+            .fetchResult(this.getState().filter)
+            .then((response: any) => {
+              this.dispatch({
+                type: this.actionTypes.SET_FILTER_RESULTS,
+                payload: {
+                  value: response,
+                },
+              });
+              this.dispatch({
+                type: this.actionTypes.SET_IS_LOADING,
+                payload: { value: false },
+              });
+              this.dispatch({
+                type: this.actionTypes.SET_HAS_FILTER_RESULTS_INITIALIZED,
+                payload: { value: true },
+              });
+              resolve(response);
+            })
+            .catch((err) => {
+              this.showError(
+                "Network error",
+                "Unable to fetch filter results",
+                true
+              );
               this.dispatch({
                 type: this.actionTypes.SET_IS_LOADING,
                 payload: { value: false },
@@ -251,6 +351,18 @@ export default class DefaultModule extends ArkModule<StateType, "Main"> {
           });
       });
     },
+    fetchResult: (filterOption: FilterOption) => {
+      return new Promise((resolve, reject) => {
+        this.getServiceProvider("Main")
+          .post("/api/filter", filterOption)
+          .then((response) => {
+            resolve((response.data && response.data) || null);
+          })
+          .catch((err) => {
+            reject((err.response && err.response && err.response.data) || err);
+          });
+      });
+    },
   };
 
   initialState: StateType = {
@@ -261,6 +373,9 @@ export default class DefaultModule extends ArkModule<StateType, "Main"> {
     featuredItems: [],
     hasCatalogueDetailsInitialized: false,
     catalogueFeaturedItem: null,
+    filter: null,
+    filterResults: [],
+    hasFilterResultInitialized: false,
   };
 
   getDefaultRoutes(): PackageRouteConfig[] {
