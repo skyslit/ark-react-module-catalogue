@@ -6,7 +6,6 @@ import {
   PackageRouteConfig,
 } from "@skyslit/ark-react/build/types";
 import HomePageView from "./views/HomePage.view.";
-import NoSearchResultView from "./views/NoSearchResult.view";
 import CatalogueDetailsPageView from "./views/CatalogueDetails.view";
 import FilterPageView from "./views/FilterPage.view";
 export type Movie = {
@@ -151,7 +150,6 @@ export default class DefaultModule extends ArkModule<StateType, "Main"> {
   views: ComponentMap = {
     StarterPage: StarterPageView,
     HomePage: HomePageView,
-    NoSearchResultPage: NoSearchResultView,
     CatalogueDetailsPage: CatalogueDetailsPageView,
     FilterPage: FilterPageView,
   };
