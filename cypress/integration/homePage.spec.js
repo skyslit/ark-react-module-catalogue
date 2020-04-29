@@ -46,8 +46,9 @@ describe("Fetch data on home page", function () {
       },
       status: 200,
     }).as("fetchCatalogueItemService");
+    cy.get("label").should("contain.text", "Amazing sports shoes");
     cy.get("#handler-0").click(1, 1);
-    cy.get("#catalogue-fetaured-item-title");
     cy.wait(["@fetchHomePageService"]);
+    cy.get("h5").should("contain.text", "Puma Shoes");
   });
 });

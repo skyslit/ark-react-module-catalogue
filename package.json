@@ -5,6 +5,7 @@
   "dependencies": {
     "@skyslit/ark-react": "1.0.11",
     "@skyslit/ark-react-scripts": "3.4.10",
+    "@types/react-infinite-scroller": "^1.2.1",
     "axios": "^0.19.2",
     "i18next": "^19.4.0",
     "jquery": "^3.4.1",
@@ -12,6 +13,7 @@
     "react-dom": "^16.13.1",
     "react-helmet-async": "^1.0.4",
     "react-i18next": "^11.3.4",
+    "react-infinite-scroller": "^1.2.4",
     "react-redux": "^7.2.0",
     "react-router-dom": "^5.1.2"
   },

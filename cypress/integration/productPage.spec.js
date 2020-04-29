@@ -32,5 +32,6 @@ describe("Populating featured catalogue details test ", function () {
     cy.visit("http://localhost:3000/product/puma-shoes");
     cy.get("#catalogue-fetaured-item-title");
     cy.wait(["@fetchCatalogueItemService"]);
+    cy.get("h5").should("contain.text", "Puma Shoes");
   });
 });

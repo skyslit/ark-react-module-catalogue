@@ -39,6 +39,8 @@ export type StateType = {
   filter: FilterOption;
   filterResults: CatalogueItem[];
   hasFilterResultInitialized: boolean;
+  maxItemsPerFilterFetchResult: number;
+  hasMoreFilterSearchResults: boolean;
 };
 
 export default class DefaultModule extends ArkModule<StateType, "Main"> {
@@ -112,6 +114,12 @@ export default class DefaultModule extends ArkModule<StateType, "Main"> {
               hasFilterResultInitialized: value,
             });
           }
+          case this.actionTypes.SET_HAS_MORE_FILTER_SEARCH_RESULT: {
+            const { value } = action.payload;
+            return Object.assign({}, state, {
+              hasMoreFilterSearchResults: value,
+            });
+          }
           default: {
             return state;
           }
@@ -136,6 +144,8 @@ export default class DefaultModule extends ArkModule<StateType, "Main"> {
     SET_FILTER_RESULTS: "SET_FILTER_RESULTS",
     SET_FILTER_OPTIONS: "SET_FILTER_OPTIONS",
     SET_HAS_FILTER_RESULTS_INITIALIZED: "SET_HAS_FILTER_RESULTS_INITIALIZED",
+    // SET_MAX_ITEMS_PER_FILTER_SEARCH_RESULT: "SET_MAX_ITEMS_PER_FILTER_SEARCH_RESULT",
+    SET_HAS_MORE_FILTER_SEARCH_RESULT: "SET_HAS_MORE_FILTER_SEARCH_RESULT",
   };
 
   views: ComponentMap = {
@@ -267,49 +277,47 @@ export default class DefaultModule extends ArkModule<StateType, "Main"> {
     },
     populateResults: (force?: boolean) => {
       return new Promise((resolve, reject) => {
-        if (
-          this.getState().hasFilterResultInitialized === false ||
-          force === true
-        ) {
-          console.log("helo1");
-          this.dispatch({
-            type: this.actionTypes.SET_IS_LOADING,
-            payload: { value: true },
-          });
-          this.services
-            .fetchResult(this.getState().filter)
-            .then((response: any) => {
+        // this.dispatch({
+        //   type: this.actionTypes.SET_IS_LOADING,
+        //   payload: { value: true },
+        // });
+        this.services
+          .fetchResult(
+            this.getState().filter,
+            5,
+            this.getState().filterResults.length
+          )
+          .then((response: any) => {
+            console.log(response);
+            if (
+              this.getState().filterResults.length <
+              this.getState().maxItemsPerFilterFetchResult
+            ) {
               this.dispatch({
                 type: this.actionTypes.SET_FILTER_RESULTS,
                 payload: {
                   value: response,
                 },
               });
+              // this.dispatch({
+              //   type: this.actionTypes.SET_IS_LOADING,
+              //   payload: { value: true },
+              // });
+            } else {
               this.dispatch({
-                type: this.actionTypes.SET_IS_LOADING,
+                type: this.actionTypes.SET_HAS_MORE_FILTER_SEARCH_RESULT,
                 payload: { value: false },
               });
-              this.dispatch({
-                type: this.actionTypes.SET_HAS_FILTER_RESULTS_INITIALIZED,
-                payload: { value: true },
-              });
-              resolve(response);
-            })
-            .catch((err) => {
-              this.showError(
-                "Network error",
-                "Unable to fetch filter results",
-                true
-              );
-              this.dispatch({
-                type: this.actionTypes.SET_IS_LOADING,
-                payload: { value: false },
-              });
-              reject(err);
-            });
-        } else {
-          resolve(true);
-        }
+            }
+          })
+          .catch((err) => {
+            this.showError(
+              "Network error",
+              "Unable to fetch filter results",
+              true
+            );
+            reject(err);
+          });
       });
     },
   };
@@ -351,10 +359,10 @@ export default class DefaultModule extends ArkModule<StateType, "Main"> {
           });
       });
     },
-    fetchResult: (filterOption: FilterOption) => {
+    fetchResult: (filterOption: FilterOption, skip: number, offset: number) => {
       return new Promise((resolve, reject) => {
         this.getServiceProvider("Main")
-          .post("/api/filter", filterOption)
+          .post("/api/filter", { filterOption, skip, offset })
           .then((response) => {
             resolve((response.data && response.data) || null);
           })
@@ -376,6 +384,8 @@ export default class DefaultModule extends ArkModule<StateType, "Main"> {
     filter: null,
     filterResults: [],
     hasFilterResultInitialized: false,
+    maxItemsPerFilterFetchResult: 10,
+    hasMoreFilterSearchResults: true,
   };
 
   getDefaultRoutes(): PackageRouteConfig[] {
