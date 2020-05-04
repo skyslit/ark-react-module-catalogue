@@ -109,6 +109,7 @@ describe("Fetch result on filter page", function () {
     cy.wait(["@fetchFilterResultService2"]);
     cy.get("h6").should("contain.text", "Nike Black White Anthracite");
     cy.wait(1000);
+    cy.viewport("iphone-6");
     cy.get(".catalogue-item").scrollTo("top");
   });
 });

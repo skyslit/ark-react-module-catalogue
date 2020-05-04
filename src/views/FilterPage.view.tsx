@@ -4,43 +4,25 @@ import { Helmet } from "react-helmet-async";
 import DefaultModule from "../module";
 import { Collapse, Modal } from "reactstrap";
 import InfiniteScroll from "react-infinite-scroller";
-import { withTranslation } from "react-i18next";
+import { withTranslation, WithTranslation } from "react-i18next";
+
+type StateType = {
+  isModalOpen: boolean;
+  openKey: string;
+};
 
 const FilterPageView = withTranslation()(
-  // @ts-ignore
   class FilterPageView extends React.Component<
-    ViewComponentPropType<DefaultModule>
+    ViewComponentPropType<DefaultModule> & WithTranslation,
+    StateType
   > {
     constructor(props: any) {
       super(props);
       this.state = {
         isModalOpen: false,
-        accordion: [true, false, false, false],
-        accordion2: [true, false, false, false],
+        openKey: "none",
       };
       this.toggleModal = this.toggleModal.bind(this);
-      this.toggleAccordion = this.toggleAccordion.bind(this);
-    }
-
-    toggleAccordion(tab: number) {
-      const prevState = (this.state as any).accordion;
-      const state = prevState.map((x: any, index: number) =>
-        tab === index ? !x : false
-      );
-
-      this.setState({
-        accordion: state,
-      });
-    }
-    toggleAccordion2(tab: number) {
-      const prevState = (this.state as any).accordion2;
-      const state = prevState.map((x: any, index: number) =>
-        tab === index ? !x : false
-      );
-
-      this.setState({
-        accordion2: state,
-      });
     }
 
     // componentDidMount() {
@@ -48,13 +30,11 @@ const FilterPageView = withTranslation()(
     // }
     toggleModal() {
       this.setState({
-        isModalOpen: !(this.state as any).isModalOpen,
+        isModalOpen: !this.state.isModalOpen,
       });
     }
 
     render() {
-      console.log(this.props.context.hasMoreFilterSearchResults);
-
       // if (this.props.context.isLoading === true) {
       //   return (
       //     <div>
@@ -65,7 +45,7 @@ const FilterPageView = withTranslation()(
       return (
         <>
           <Helmet>
-            <title>{(this.props as any).t("Filter Page")}</title>
+            <title>{this.props.t("Filter Page")}</title>
           </Helmet>
           <div style={{ height: "100vh" }}>
             <div
@@ -76,7 +56,7 @@ const FilterPageView = withTranslation()(
                 <div className="col-12 d-flex pl-5 pl-sm-0 pb-5">
                   <div className="flex-shrink-0">
                     <h4 className="font-weight-bold">
-                      {(this.props as any).t("Search result")}
+                      {this.props.t("Search result")}
                     </h4>
                   </div>
                   <div className="flex-fill"></div>
@@ -88,7 +68,7 @@ const FilterPageView = withTranslation()(
                     >
                       <i className="fas fa-filter text-secondary pt-1"></i>
                       <h6 className="text-secondary font-weight-bold pl-2 mb-0">
-                        {(this.props as any).t("FILTER")}
+                        {this.props.t("FILTER")}
                       </h6>
                     </button>
                   </div>
@@ -104,7 +84,7 @@ const FilterPageView = withTranslation()(
                     >
                       <i className="fas fa-filter text-secondary pt-1"></i>
                       <h5 className="text-secondary font-weight-bold pl-2 mb-0">
-                        {(this.props as any).t("FILTER")}
+                        {this.props.t("FILTER")}
                       </h5>
                     </div>
                     <div className="flex-fill"></div>
@@ -114,7 +94,7 @@ const FilterPageView = withTranslation()(
                     >
                       <h5>
                         <span className="badge badge-secondary">
-                          {(this.props as any).t("12")}
+                          {this.props.t("12")}
                         </span>
                       </h5>
                       <button className="btn btn-link pt-0">
@@ -124,7 +104,7 @@ const FilterPageView = withTranslation()(
                   </div>
                   <button
                     className="btn-block d-flex px-4 py-2"
-                    onClick={() => this.toggleAccordion(0)}
+                    onClick={() => this.setState({ openKey: "collection" })}
                     style={{
                       backgroundColor: "transparent",
                       outline: "none",
@@ -133,7 +113,7 @@ const FilterPageView = withTranslation()(
                   >
                     <div className="flex-shrink-0">
                       <h6 className="text-secondary">
-                        {(this.props as any).t("By Collection")}
+                        {this.props.t("By Collection")}
                       </h6>
                     </div>
                     <div className="flex-fill"></div>
@@ -141,7 +121,7 @@ const FilterPageView = withTranslation()(
                       <i className="fas fa-chevron-circle-up text-secondary"></i>
                     </div>
                   </button>
-                  <Collapse isOpen={(this.state as any).accordion[0]}>
+                  <Collapse isOpen={this.state.openKey === "collection"}>
                     <div
                       style={{ backgroundColor: "#E9E9E9" }}
                       className="px-4 py-3"
@@ -152,7 +132,7 @@ const FilterPageView = withTranslation()(
                             style={{ borderRadius: 20 }}
                             className="btn btn-info mr-3 mt-3"
                           >
-                            {(this.props as any).t("Collection 1")}
+                            {this.props.t("Collection 1")}
                             <i className="fas fa-minus-circle pl-3"></i>
                           </button>
                         </div>
@@ -161,7 +141,7 @@ const FilterPageView = withTranslation()(
                             style={{ borderRadius: 20 }}
                             className="btn btn-secondary mr-3 mt-3"
                           >
-                            {(this.props as any).t("Collection 2")}
+                            {this.props.t("Collection 2")}
                           </button>
                         </div>
                         <div className="d-inline-block">
@@ -169,7 +149,7 @@ const FilterPageView = withTranslation()(
                             style={{ borderRadius: 20 }}
                             className="btn btn-secondary mr-3 mt-3"
                           >
-                            {(this.props as any).t("Collection 3")}
+                            {this.props.t("Collection 3")}
                           </button>
                         </div>
                         <div className="d-inline-block">
@@ -177,7 +157,7 @@ const FilterPageView = withTranslation()(
                             style={{ borderRadius: 20 }}
                             className="btn btn-info mr-3 mt-3"
                           >
-                            {(this.props as any).t("Collection 4")}
+                            {this.props.t("Collection 4")}
                             <i className="fas fa-minus-circle pl-3"></i>
                           </button>
                         </div>
@@ -186,7 +166,7 @@ const FilterPageView = withTranslation()(
                             style={{ borderRadius: 20 }}
                             className="btn btn-secondary mr-3 mt-3"
                           >
-                            {(this.props as any).t("Collection 5")}
+                            {this.props.t("Collection 5")}
                           </button>
                         </div>
                         <div className="d-inline-block">
@@ -194,7 +174,7 @@ const FilterPageView = withTranslation()(
                             style={{ borderRadius: 20 }}
                             className="btn btn-secondary mr-3 mt-3"
                           >
-                            {(this.props as any).t("Collection 6")}
+                            {this.props.t("Collection 6")}
                           </button>
                         </div>
                       </div>
@@ -202,7 +182,7 @@ const FilterPageView = withTranslation()(
                   </Collapse>
                   <button
                     className="btn-block d-flex px-4 py-2"
-                    onClick={() => this.toggleAccordion(1)}
+                    onClick={() => this.setState({ openKey: "price" })}
                     style={{
                       backgroundColor: "transparent",
                       outline: "none",
@@ -211,7 +191,7 @@ const FilterPageView = withTranslation()(
                   >
                     <div className="flex-shrink-0">
                       <h6 className="text-secondary">
-                        {(this.props as any).t("By Price")}
+                        {this.props.t("By Price")}
                       </h6>
                     </div>
                     <div className="flex-fill"></div>
@@ -219,7 +199,7 @@ const FilterPageView = withTranslation()(
                       <i className="fas fa-chevron-circle-up text-secondary"></i>
                     </div>
                   </button>
-                  <Collapse isOpen={(this.state as any).accordion[1]}>
+                  <Collapse isOpen={this.state.openKey === "price"}>
                     <div
                       style={{ backgroundColor: "#E9E9E9" }}
                       className="px-4 py-3"
@@ -241,7 +221,7 @@ const FilterPageView = withTranslation()(
                             htmlFor="brand-1"
                             className="form-check-label d-block text-secondary font-weight-bold"
                           >
-                            {(this.props as any).t("Price Range-1")}
+                            {this.props.t("Price Range-1")}
                           </label>
                         </div>
                         <div className="flex-shrink-0">
@@ -261,7 +241,7 @@ const FilterPageView = withTranslation()(
                             htmlFor="brand-2"
                             className="form-check-label d-block text-secondary font-weight-bold"
                           >
-                            {(this.props as any).t("Price Range-2")}
+                            {this.props.t("Price Range-2")}
                           </label>
                         </div>
                         <div className="flex-shrink-0">
@@ -281,7 +261,7 @@ const FilterPageView = withTranslation()(
                             htmlFor="brand-3"
                             className="form-check-label d-block text-secondary font-weight-bold"
                           >
-                            {(this.props as any).t("Price Range-3")}
+                            {this.props.t("Price Range-3")}
                           </label>
                         </div>
                         <div className="flex-shrink-0">
@@ -301,7 +281,7 @@ const FilterPageView = withTranslation()(
                             htmlFor="brand-4"
                             className="form-check-label d-block text-secondary font-weight-bold"
                           >
-                            {(this.props as any).t("Price Range-4")}
+                            {this.props.t("Price Range-4")}
                           </label>
                         </div>
                         <div className="flex-shrink-0">
@@ -321,7 +301,7 @@ const FilterPageView = withTranslation()(
                             htmlFor="brand-5"
                             className="form-check-label d-block text-secondary font-weight-bold"
                           >
-                            {(this.props as any).t("Price Range-5")}
+                            {this.props.t("Price Range-5")}
                           </label>
                         </div>
                         <div className="flex-shrink-0">
@@ -336,7 +316,7 @@ const FilterPageView = withTranslation()(
                   </Collapse>
                   <button
                     className="btn-block d-flex px-4 py-2"
-                    onClick={() => this.toggleAccordion(2)}
+                    onClick={() => this.setState({ openKey: "size" })}
                     style={{
                       backgroundColor: "transparent",
                       outline: "none",
@@ -345,7 +325,7 @@ const FilterPageView = withTranslation()(
                   >
                     <div className="flex-shrink-0">
                       <h6 className="text-secondary">
-                        {(this.props as any).t("By Size")}
+                        {this.props.t("By Size")}
                       </h6>
                     </div>
                     <div className="flex-fill"></div>
@@ -353,7 +333,7 @@ const FilterPageView = withTranslation()(
                       <i className="fas fa-chevron-circle-up text-secondary"></i>
                     </div>
                   </button>
-                  <Collapse isOpen={(this.state as any).accordion[2]}>
+                  <Collapse isOpen={this.state.openKey === "size"}>
                     <div
                       style={{ backgroundColor: "#E9E9E9" }}
                       className="px-4 py-3"
@@ -375,7 +355,7 @@ const FilterPageView = withTranslation()(
                             htmlFor="brand-1"
                             className="form-check-label d-block text-secondary font-weight-bold"
                           >
-                            {(this.props as any).t("Size-1")}
+                            {this.props.t("Size-1")}
                           </label>
                         </div>
                         <div className="flex-shrink-0">
@@ -395,7 +375,7 @@ const FilterPageView = withTranslation()(
                             htmlFor="brand-2"
                             className="form-check-label d-block text-secondary font-weight-bold"
                           >
-                            {(this.props as any).t("Size-2")}
+                            {this.props.t("Size-2")}
                           </label>
                         </div>
                         <div className="flex-shrink-0">
@@ -415,7 +395,7 @@ const FilterPageView = withTranslation()(
                             htmlFor="brand-3"
                             className="form-check-label d-block text-secondary font-weight-bold"
                           >
-                            {(this.props as any).t("Size-3")}
+                            {this.props.t("Size-3")}
                           </label>
                         </div>
                         <div className="flex-shrink-0">
@@ -435,7 +415,7 @@ const FilterPageView = withTranslation()(
                             htmlFor="brand-4"
                             className="form-check-label d-block text-secondary font-weight-bold"
                           >
-                            {(this.props as any).t("Size-4")}
+                            {this.props.t("Size-4")}
                           </label>
                         </div>
                         <div className="flex-shrink-0">
@@ -455,7 +435,7 @@ const FilterPageView = withTranslation()(
                             htmlFor="brand-5"
                             className="form-check-label d-block text-secondary font-weight-bold"
                           >
-                            {(this.props as any).t("Size-5")}
+                            {this.props.t("Size-5")}
                           </label>
                         </div>
                         <div className="flex-shrink-0">
@@ -470,7 +450,7 @@ const FilterPageView = withTranslation()(
                   </Collapse>
                   <button
                     className="btn-block d-flex px-4 py-2"
-                    onClick={() => this.toggleAccordion(3)}
+                    onClick={() => this.setState({ openKey: "brand" })}
                     style={{
                       backgroundColor: "transparent",
                       outline: "none",
@@ -479,7 +459,7 @@ const FilterPageView = withTranslation()(
                   >
                     <div className="flex-shrink-0">
                       <h6 className="text-secondary">
-                        {(this.props as any).t("By Brand")}
+                        {this.props.t("By Brand")}
                       </h6>
                     </div>
                     <div className="flex-fill"></div>
@@ -487,7 +467,7 @@ const FilterPageView = withTranslation()(
                       <i className="fas fa-chevron-circle-down text-secondary"></i>
                     </div>
                   </button>
-                  <Collapse isOpen={(this.state as any).accordion[3]}>
+                  <Collapse isOpen={this.state.openKey === "brand"}>
                     <div
                       style={{ backgroundColor: "#E9E9E9" }}
                       className="px-4 py-3"
@@ -509,7 +489,7 @@ const FilterPageView = withTranslation()(
                             htmlFor="brand-1"
                             className="form-check-label d-block text-secondary font-weight-bold"
                           >
-                            {(this.props as any).t("Brand-1")}
+                            {this.props.t("Brand-1")}
                           </label>
                         </div>
                         <div className="flex-shrink-0">
@@ -529,7 +509,7 @@ const FilterPageView = withTranslation()(
                             htmlFor="brand-2"
                             className="form-check-label d-block text-secondary font-weight-bold"
                           >
-                            {(this.props as any).t("Brand-2")}
+                            {this.props.t("Brand-2")}
                           </label>
                         </div>
                         <div className="flex-shrink-0">
@@ -549,7 +529,7 @@ const FilterPageView = withTranslation()(
                             htmlFor="brand-3"
                             className="form-check-label d-block text-secondary font-weight-bold"
                           >
-                            {(this.props as any).t("Brand-3")}
+                            {this.props.t("Brand-3")}
                           </label>
                         </div>
                         <div className="flex-shrink-0">
@@ -569,7 +549,7 @@ const FilterPageView = withTranslation()(
                             htmlFor="brand-4"
                             className="form-check-label d-block text-secondary font-weight-bold"
                           >
-                            {(this.props as any).t("Brand-4")}
+                            {this.props.t("Brand-4")}
                           </label>
                         </div>
                         <div className="flex-shrink-0">
@@ -589,7 +569,7 @@ const FilterPageView = withTranslation()(
                             htmlFor="brand-5"
                             className="form-check-label d-block text-secondary font-weight-bold"
                           >
-                            {(this.props as any).t("Brand-5")}
+                            {this.props.t("Brand-5")}
                           </label>
                         </div>
                         <div className="flex-shrink-0">
@@ -612,7 +592,7 @@ const FilterPageView = withTranslation()(
                     hasMore={this.props.context.hasMoreFilterSearchResults}
                     loader={
                       <div className="loader" key={0}>
-                        {(this.props as any).t("Loading ...")}
+                        {this.props.t("Loading ...")}
                       </div>
                     }
                     useWindow={false}
@@ -646,13 +626,13 @@ const FilterPageView = withTranslation()(
                                 style={{ fontSize: 16 }}
                                 className="font-weight-bold pr-2"
                               >
-                                {(this.props as any).t("DETAIL 1")}
+                                {this.props.t("DETAIL 1")}
                               </span>
                               <span
                                 style={{ fontSize: 14 }}
                                 className="font-weight-bold text-success"
                               >
-                                {(this.props as any).t("DETAIL 2")}
+                                {this.props.t("DETAIL 2")}
                               </span>
                             </div>
                           </div>
@@ -664,10 +644,7 @@ const FilterPageView = withTranslation()(
               </div>
             </div>
           </div>
-          <Modal
-            isOpen={(this.state as any).isModalOpen}
-            toggle={this.toggleModal}
-          >
+          <Modal isOpen={this.state.isModalOpen} toggle={this.toggleModal}>
             <div style={{ backgroundColor: "#EFEFEF" }} className="col-12 px-0">
               <button
                 onClick={this.toggleModal}
@@ -682,7 +659,7 @@ const FilterPageView = withTranslation()(
                 >
                   <i className="fas fa-filter text-secondary pt-1"></i>
                   <h5 className="text-secondary font-weight-bold pl-2 mb-0">
-                    {(this.props as any).t("FILTER")}
+                    {this.props.t("FILTER")}
                   </h5>
                 </div>
                 <div className="flex-fill"></div>
@@ -692,7 +669,7 @@ const FilterPageView = withTranslation()(
                 >
                   <h5>
                     <span className="badge badge-secondary">
-                      {(this.props as any).t("12")}
+                      {this.props.t("12")}
                     </span>
                   </h5>
                   <button className="btn btn-link p-0">
@@ -702,7 +679,7 @@ const FilterPageView = withTranslation()(
               </div>
               <button
                 className="btn-block d-flex px-4 py-2"
-                onClick={() => this.toggleAccordion2(0)}
+                onClick={() => this.setState({ openKey: "modalCollection" })}
                 style={{
                   backgroundColor: "transparent",
                   outline: "none",
@@ -711,7 +688,7 @@ const FilterPageView = withTranslation()(
               >
                 <div className="flex-shrink-0">
                   <h6 className="text-secondary">
-                    {(this.props as any).t("By Collection")}
+                    {this.props.t("Collection")}
                   </h6>
                 </div>
                 <div className="flex-fill"></div>
@@ -719,7 +696,7 @@ const FilterPageView = withTranslation()(
                   <i className="fas fa-chevron-circle-up text-secondary"></i>
                 </div>
               </button>
-              <Collapse isOpen={(this.state as any).accordion2[0]}>
+              <Collapse isOpen={this.state.openKey === "modalCollection"}>
                 <div
                   style={{ backgroundColor: "#E9E9E9" }}
                   className="px-4 py-3"
@@ -730,7 +707,7 @@ const FilterPageView = withTranslation()(
                         style={{ borderRadius: 20 }}
                         className="btn btn-info mr-3 mt-3"
                       >
-                        {(this.props as any).t("Collection 1")}
+                        {this.props.t("Collection 1")}
                         <i className="fas fa-minus-circle pl-3"></i>
                       </button>
                     </div>
@@ -739,7 +716,7 @@ const FilterPageView = withTranslation()(
                         style={{ borderRadius: 20 }}
                         className="btn btn-secondary mr-3 mt-3"
                       >
-                        {(this.props as any).t("Collection 1")}
+                        {this.props.t("Collection 1")}
                       </button>
                     </div>
                     <div className="d-inline-block">
@@ -747,7 +724,7 @@ const FilterPageView = withTranslation()(
                         style={{ borderRadius: 20 }}
                         className="btn btn-secondary mr-3 mt-3"
                       >
-                        {(this.props as any).t("Collection 1")}
+                        {this.props.t("Collection 1")}
                       </button>
                     </div>
                     <div className="d-inline-block">
@@ -755,7 +732,7 @@ const FilterPageView = withTranslation()(
                         style={{ borderRadius: 20 }}
                         className="btn btn-info mr-3 mt-3"
                       >
-                        {(this.props as any).t("Collection 1")}
+                        {this.props.t("Collection 1")}
                         <i className="fas fa-minus-circle pl-3"></i>
                       </button>
                     </div>
@@ -764,7 +741,7 @@ const FilterPageView = withTranslation()(
                         style={{ borderRadius: 20 }}
                         className="btn btn-secondary mr-3 mt-3"
                       >
-                        {(this.props as any).t("Collection 1")}
+                        {this.props.t("Collection 1")}
                       </button>
                     </div>
                     <div className="d-inline-block">
@@ -772,7 +749,7 @@ const FilterPageView = withTranslation()(
                         style={{ borderRadius: 20 }}
                         className="btn btn-secondary mr-3 mt-3"
                       >
-                        {(this.props as any).t("Collection 1")}
+                        {this.props.t("Collection 1")}
                       </button>
                     </div>
                   </div>
@@ -780,7 +757,7 @@ const FilterPageView = withTranslation()(
               </Collapse>
               <button
                 className="btn-block d-flex px-4 py-2"
-                onClick={() => this.toggleAccordion2(1)}
+                onClick={() => this.setState({ openKey: "modalPrice" })}
                 style={{
                   backgroundColor: "transparent",
                   outline: "none",
@@ -788,16 +765,14 @@ const FilterPageView = withTranslation()(
                 }}
               >
                 <div className="flex-shrink-0">
-                  <h6 className="text-secondary">
-                    {(this.props as any).t("By Price")}
-                  </h6>
+                  <h6 className="text-secondary">{this.props.t("By Price")}</h6>
                 </div>
                 <div className="flex-fill"></div>
                 <div className="flex-shrink-0">
                   <i className="fas fa-chevron-circle-up text-secondary"></i>
                 </div>
               </button>
-              <Collapse isOpen={(this.state as any).accordion2[1]}>
+              <Collapse isOpen={this.state.openKey === "modalPrice"}>
                 <div
                   style={{ backgroundColor: "#E9E9E9" }}
                   className="px-4 py-3"
@@ -819,7 +794,7 @@ const FilterPageView = withTranslation()(
                         htmlFor="brand-1"
                         className="form-check-label d-block text-secondary font-weight-bold"
                       >
-                        {(this.props as any).t("Price Range-1")}
+                        {this.props.t("Price Range-1")}
                       </label>
                     </div>
                     <div className="flex-shrink-0">
@@ -839,7 +814,7 @@ const FilterPageView = withTranslation()(
                         htmlFor="brand-2"
                         className="form-check-label d-block text-secondary font-weight-bold"
                       >
-                        {(this.props as any).t("Price Range-2")}
+                        {this.props.t("Price Range-2")}
                       </label>
                     </div>
                     <div className="flex-shrink-0">
@@ -859,7 +834,7 @@ const FilterPageView = withTranslation()(
                         htmlFor="brand-3"
                         className="form-check-label d-block text-secondary font-weight-bold"
                       >
-                        {(this.props as any).t("Price Range-3")}
+                        {this.props.t("Price Range-3")}
                       </label>
                     </div>
                     <div className="flex-shrink-0">
@@ -879,7 +854,7 @@ const FilterPageView = withTranslation()(
                         htmlFor="brand-4"
                         className="form-check-label d-block text-secondary font-weight-bold"
                       >
-                        {(this.props as any).t("Price Range-4")}
+                        {this.props.t("Price Range-4")}
                       </label>
                     </div>
                     <div className="flex-shrink-0">
@@ -899,7 +874,7 @@ const FilterPageView = withTranslation()(
                         htmlFor="brand-5"
                         className="form-check-label d-block text-secondary font-weight-bold"
                       >
-                        {(this.props as any).t("Price Range-5")}
+                        {this.props.t("Price Range-5")}
                       </label>
                     </div>
                     <div className="flex-shrink-0">
@@ -914,7 +889,7 @@ const FilterPageView = withTranslation()(
               </Collapse>
               <button
                 className="btn-block d-flex px-4 py-2"
-                onClick={() => this.toggleAccordion2(2)}
+                onClick={() => this.setState({ openKey: "modalSize" })}
                 style={{
                   backgroundColor: "transparent",
                   outline: "none",
@@ -922,26 +897,131 @@ const FilterPageView = withTranslation()(
                 }}
               >
                 <div className="flex-shrink-0">
-                  <h6 className="text-secondary">
-                    {(this.props as any).t("By Size")}
-                  </h6>
+                  <h6 className="text-secondary">{this.props.t("By Size")}</h6>
                 </div>
                 <div className="flex-fill"></div>
                 <div className="flex-shrink-0">
                   <i className="fas fa-chevron-circle-up text-secondary"></i>
                 </div>
               </button>
-              <Collapse isOpen={(this.state as any).accordion2[2]}>
+              <Collapse isOpen={this.state.openKey === "modalSize"}>
                 <div
                   style={{ backgroundColor: "#E9E9E9" }}
-                  className="px-3 py-3"
+                  className="px-4 py-3"
                 >
-                  <div>hello</div>
+                  {/* <div className="py-4">
+                    <input
+                      style={{ border: "none", backgroundColor: "#F2F2F2" }}
+                      type="text"
+                      className="form-control"
+                      placeholder="Search for your brand"
+                    />
+                  </div> */}
+                  <div
+                    style={{ backgroundColor: "#EDEDED", borderRadius: 5 }}
+                    className=" form-check d-flex px-4 py-2 mb-3"
+                  >
+                    <div className="flex-fill">
+                      <label
+                        htmlFor="brand-1"
+                        className="form-check-label d-block text-secondary font-weight-bold"
+                      >
+                        {this.props.t("Size-1")}
+                      </label>
+                    </div>
+                    <div className="flex-shrink-0">
+                      <input
+                        type="checkbox"
+                        className="form-check-input"
+                        id="brand-1"
+                      />
+                    </div>
+                  </div>
+                  <div
+                    style={{ backgroundColor: "#EDEDED", borderRadius: 5 }}
+                    className=" form-check d-flex px-4 py-2 mb-3"
+                  >
+                    <div className="flex-fill">
+                      <label
+                        htmlFor="brand-2"
+                        className="form-check-label d-block text-secondary font-weight-bold"
+                      >
+                        {this.props.t("Size-2")}
+                      </label>
+                    </div>
+                    <div className="flex-shrink-0">
+                      <input
+                        type="checkbox"
+                        className="form-check-input"
+                        id="brand-2"
+                      />
+                    </div>
+                  </div>
+                  <div
+                    style={{ backgroundColor: "#EDEDED", borderRadius: 5 }}
+                    className=" form-check d-flex px-4 py-2 mb-3"
+                  >
+                    <div className="flex-fill">
+                      <label
+                        htmlFor="brand-3"
+                        className="form-check-label d-block text-secondary font-weight-bold"
+                      >
+                        {this.props.t("Size-3")}
+                      </label>
+                    </div>
+                    <div className="flex-shrink-0">
+                      <input
+                        type="checkbox"
+                        className="form-check-input"
+                        id="brand-3"
+                      />
+                    </div>
+                  </div>
+                  <div
+                    style={{ backgroundColor: "#EDEDED", borderRadius: 5 }}
+                    className=" form-check d-flex px-4 py-2 mb-3"
+                  >
+                    <div className="flex-fill">
+                      <label
+                        htmlFor="brand-4"
+                        className="form-check-label d-block text-secondary font-weight-bold"
+                      >
+                        {this.props.t("Size-4")}
+                      </label>
+                    </div>
+                    <div className="flex-shrink-0">
+                      <input
+                        type="checkbox"
+                        className="form-check-input"
+                        id="brand-4"
+                      />
+                    </div>
+                  </div>
+                  <div
+                    style={{ backgroundColor: "#EDEDED", borderRadius: 5 }}
+                    className=" form-check d-flex px-4 py-2 mb-3"
+                  >
+                    <div className="flex-fill">
+                      <label
+                        htmlFor="brand-5"
+                        className="form-check-label d-block text-secondary font-weight-bold"
+                      >
+                        {this.props.t("Size-5")}
+                      </label>
+                    </div>
+                    <div className="flex-shrink-0">
+                      <input
+                        type="checkbox"
+                        className="form-check-input"
+                        id="brand-5"
+                      />
+                    </div>
+                  </div>
                 </div>
               </Collapse>
               <button
                 className="btn-block d-flex px-4 py-2"
-                onClick={() => this.toggleAccordion2(3)}
+                onClick={() => this.setState({ openKey: "modalBrand" })}
                 style={{
                   backgroundColor: "transparent",
                   outline: "none",
@@ -949,16 +1029,14 @@ const FilterPageView = withTranslation()(
                 }}
               >
                 <div className="flex-shrink-0">
-                  <h6 className="text-secondary">
-                    {(this.props as any).t("By Brand")}
-                  </h6>
+                  <h6 className="text-secondary">{this.props.t("By Brand")}</h6>
                 </div>
                 <div className="flex-fill"></div>
                 <div className="flex-shrink-0">
                   <i className="fas fa-chevron-circle-down text-secondary"></i>
                 </div>
               </button>
-              <Collapse isOpen={(this.state as any).accordion2[3]}>
+              <Collapse isOpen={this.state.openKey === "modalBrand"}>
                 <div
                   style={{ backgroundColor: "#E9E9E9" }}
                   className="px-4 py-3"
@@ -980,7 +1058,7 @@ const FilterPageView = withTranslation()(
                         htmlFor="brand-1"
                         className="form-check-label d-block text-secondary font-weight-bold"
                       >
-                        {(this.props as any).t("Brand-1")}
+                        {this.props.t("Brand-1")}
                       </label>
                     </div>
                     <div className="flex-shrink-0">
@@ -1000,7 +1078,7 @@ const FilterPageView = withTranslation()(
                         htmlFor="brand-2"
                         className="form-check-label d-block text-secondary font-weight-bold"
                       >
-                        {(this.props as any).t("Brand-2")}
+                        {this.props.t("Brand-2")}
                       </label>
                     </div>
                     <div className="flex-shrink-0">
@@ -1020,7 +1098,7 @@ const FilterPageView = withTranslation()(
                         htmlFor="brand-3"
                         className="form-check-label d-block text-secondary font-weight-bold"
                       >
-                        {(this.props as any).t("Brand-3")}
+                        {this.props.t("Brand-3")}
                       </label>
                     </div>
                     <div className="flex-shrink-0">
@@ -1040,7 +1118,7 @@ const FilterPageView = withTranslation()(
                         htmlFor="brand-4"
                         className="form-check-label d-block text-secondary font-weight-bold"
                       >
-                        {(this.props as any).t("Brand-4")}
+                        {this.props.t("Brand-4")}
                       </label>
                     </div>
                     <div className="flex-shrink-0">
@@ -1060,7 +1138,7 @@ const FilterPageView = withTranslation()(
                         htmlFor="brand-5"
                         className="form-check-label d-block text-secondary font-weight-bold"
                       >
-                        {(this.props as any).t("Brand-5")}
+                        {this.props.t("Brand-5")}
                       </label>
                     </div>
                     <div className="flex-shrink-0">

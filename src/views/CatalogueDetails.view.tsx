@@ -3,12 +3,11 @@ import { ViewComponentPropType } from "@skyslit/ark-react";
 import { Helmet } from "react-helmet-async";
 import DefaultModule from "../module";
 import PageNotFound from "../components/PageNotFound";
-import { withTranslation } from "react-i18next";
+import { withTranslation, WithTranslation } from "react-i18next";
 
 const CatalogueDetailsPageView = withTranslation()(
-  // @ts-ignore
   class CatalogueDetailsPageView extends React.Component<
-    ViewComponentPropType<DefaultModule>
+    ViewComponentPropType<DefaultModule> & WithTranslation
   > {
     componentDidMount() {
       this.props.module.controller.populateCatalogueItemByHandler(
@@ -16,7 +15,6 @@ const CatalogueDetailsPageView = withTranslation()(
       );
     }
     render() {
-      console.log(this.props.context.catalogueFeaturedItem);
       if (this.props.context.isLoading === true) {
         return (
           <div>
@@ -36,7 +34,7 @@ const CatalogueDetailsPageView = withTranslation()(
       return (
         <>
           <Helmet>
-            <title>{(this.props as any).t("Product Page")}</title>
+            <title>{this.props.t("Product Page")}</title>
           </Helmet>
           <div className="container-fluid bg-light catalogue-module-product-wrapper">
             <div className="row">
@@ -70,24 +68,24 @@ const CatalogueDetailsPageView = withTranslation()(
                             type="button"
                             className="btn btn-success d-none d-sm-block px-5 py-2"
                           >
-                            {(this.props as any).t("ACTION 1")}
+                            {this.props.t("ACTION 1")}
                           </button>
                           <button
                             style={{ maxWidth: 300 }}
                             type="button"
                             className="btn btn-success btn-block d-sm-none px-5 py-2"
                           >
-                            {(this.props as any).t("ACTION 1")}
+                            {this.props.t("ACTION 1")}
                           </button>
                         </div>
                         <div className="col-12 order-5 px-0 order-sm-3">
                           <p className="text-secondary pt-3">
-                            {(this.props as any).t(
+                            {this.props.t(
                               "Lorem ipsum dolor sit amet, consectetur adipiscingelit. Morbi rhoncus, ex a fermentum pulvinar, diamurna fermentum sem, at posuere erat nunc nec metus.Donec iaculis velit lorem, non convallis ligulavulputate eu. Proin in eros condimentum, commodo anteac, fringilla augue. Sed eget elit et lorem faucibussemper. Interdum et malesuada fames ac ante ipsumprimis in faucibus. Donec interdum augue eget liberoaccumsan euismod. Nulla lobortis nisl non odio mattis, vel accumsan neque mollis."
                             )}
                           </p>
                           <p className="text-secondary pt-3">
-                            {(this.props as any).t(
+                            {this.props.t(
                               "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi rhoncus, ex a fermentum pulvinar, diam urna fermentum sem, at posuere erat nunc nec metus.Donec iaculis velit lorem, non convallis ligula vulputate eu. Proin in eros condimentum, commodo anteac, fringilla augue. Sed eget elit et lorem faucibussemper. Interdum et."
                             )}
                           </p>
@@ -97,13 +95,13 @@ const CatalogueDetailsPageView = withTranslation()(
                             style={{ fontSize: 16 }}
                             className="font-weight-bold pr-2"
                           >
-                            {(this.props as any).t("DETAIL 1")}
+                            {this.props.t("DETAIL 1")}
                           </span>
                           <span
                             style={{ fontSize: 14 }}
                             className="font-weight-bold text-success"
                           >
-                            {(this.props as any).t("DETAIL 2")}
+                            {this.props.t("DETAIL 2")}
                           </span>
                         </div>
                         <div className="col-sm-6 text-center order-4 order-sm-5 text-sm-right d-flex align-items-center justify-content-center pt-3 pt-sm-0 px-0">
@@ -111,14 +109,14 @@ const CatalogueDetailsPageView = withTranslation()(
                             type="button"
                             className="btn btn-secondary d-none d-sm-block px-5 py-2"
                           >
-                            {(this.props as any).t("ACTION 2")}
+                            {this.props.t("ACTION 2")}
                           </button>
                           <button
                             style={{ maxWidth: 300 }}
                             type="button"
                             className="btn btn-secondary btn-block d-sm-none px-5 py-2"
                           >
-                            {(this.props as any).t("ACTION 2")}
+                            {this.props.t("ACTION 2")}
                           </button>
                         </div>
                       </div>
@@ -127,7 +125,7 @@ const CatalogueDetailsPageView = withTranslation()(
                 </div>
               </div>
               <div className="col-12 bg-white pt-5 px-sm-5">
-                <h5>{(this.props as any).t("SIMILAR PRODUCTS")}</h5>
+                <h5>{this.props.t("SIMILAR PRODUCTS")}</h5>
                 <div className="pt-5">
                   <img
                     width={200}
@@ -135,9 +133,9 @@ const CatalogueDetailsPageView = withTranslation()(
                     alt="logo"
                     className="product-img-wrapper"
                   />
-                  <h6 className="pt-4">{(this.props as any).t("TITLE 1")}</h6>
+                  <h6 className="pt-4">{this.props.t("TITLE 1")}</h6>
                   <label className="text-secondary font-weight-bold">
-                    {(this.props as any).t("DESCRIPTION")}
+                    {this.props.t("DESCRIPTION")}
                   </label>
                 </div>
               </div>

@@ -275,10 +275,6 @@ export default class DefaultModule extends ArkModule<StateType, "Main"> {
     },
     populateResults: (force?: boolean) => {
       return new Promise((resolve, reject) => {
-        // this.dispatch({
-        //   type: this.actionTypes.SET_IS_LOADING,
-        //   payload: { value: true },
-        // });
         this.services
           .fetchResult(
             this.getState().filter,
@@ -286,7 +282,6 @@ export default class DefaultModule extends ArkModule<StateType, "Main"> {
             this.getState().filterResults.length
           )
           .then((response: any) => {
-            console.log(response);
             if (
               this.getState().filterResults.length <
               this.getState().maxItemsPerFilterFetchResult
@@ -297,10 +292,6 @@ export default class DefaultModule extends ArkModule<StateType, "Main"> {
                   value: response,
                 },
               });
-              // this.dispatch({
-              //   type: this.actionTypes.SET_IS_LOADING,
-              //   payload: { value: true },
-              // });
             } else {
               this.dispatch({
                 type: this.actionTypes.SET_HAS_MORE_FILTER_SEARCH_RESULT,
@@ -397,11 +388,6 @@ export default class DefaultModule extends ArkModule<StateType, "Main"> {
         path: "/product/:handler",
         exact: true,
         component: this.views.CatalogueDetailsPage,
-      },
-      {
-        path: "/no-search-result",
-        exact: true,
-        component: this.views.NoSearchResultPage,
       },
       {
         path: "/home-page",

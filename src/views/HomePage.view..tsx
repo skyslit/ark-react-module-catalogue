@@ -3,19 +3,16 @@ import { ViewComponentPropType } from "@skyslit/ark-react";
 import { Helmet } from "react-helmet-async";
 import DefaultModule from "../module";
 import { Link } from "react-router-dom";
-import { withTranslation } from "react-i18next";
+import { withTranslation, WithTranslation } from "react-i18next";
 
 const HomePageView = withTranslation()(
-  // @ts-ignore
   class HomePageView extends React.Component<
-    ViewComponentPropType<DefaultModule>
+    ViewComponentPropType<DefaultModule> & WithTranslation
   > {
     componentDidMount() {
       this.props.module.controller.populateHome();
     }
     render() {
-      console.log(this.props.context.featuredItems);
-
       if (this.props.context.isLoading === true) {
         return (
           <div>
@@ -26,7 +23,7 @@ const HomePageView = withTranslation()(
       return (
         <>
           <Helmet>
-            <title>{(this.props as any).t("Home Page")}</title>
+            <title>{this.props.t("Home Page")}</title>
           </Helmet>
           <div className="container-fluid px-md-5">
             <div className="row px-md-5">
@@ -40,22 +37,22 @@ const HomePageView = withTranslation()(
                 </div>
                 <div className="pt-5 mt-5 px-md-5 mr-sm-5">
                   <h5 className="text-light pt-5">
-                    {(this.props as any).t("COVER DESCRIPTION")}
+                    {this.props.t("COVER DESCRIPTION")}
                   </h5>
                   <h1
                     style={{ fontSize: 40 }}
                     className="text-light font-weight-bold pt-2"
                   >
-                    {(this.props as any).t("SOME")}
-                    <br></br> {(this.props as any).t("FANCY")}
-                    <br></br> {(this.props as any).t("TITLE TO")}
-                    <br></br> {(this.props as any).t("SHOW")}
+                    {this.props.t("SOME")}
+                    <br></br> {this.props.t("FANCY")}
+                    <br></br> {this.props.t("TITLE TO")}
+                    <br></br> {this.props.t("SHOW")}
                   </h1>
                   <button
                     type="button"
                     className="btn btn-light mt-4 mt-sm-5 py-2 py-sm-3 px-4 px-sm-5"
                   >
-                    {(this.props as any).t("CHECK IT OUT")}
+                    {this.props.t("CHECK IT OUT")}
                   </button>
                 </div>
               </div>
@@ -63,7 +60,7 @@ const HomePageView = withTranslation()(
             <div className="row px-md-5 mt-4 pt-3 bg-light">
               <div className="col-12 px-md-5 d-flex align-items-center">
                 <div className="flex-shrink-0">
-                  <h5>{(this.props as any).t("TODAY'S SPECIAL")}</h5>
+                  <h5>{this.props.t("TODAY'S SPECIAL")}</h5>
                 </div>
                 <div className="flex-fill"></div>
                 <div className="flex-shrink-0">
@@ -72,7 +69,7 @@ const HomePageView = withTranslation()(
                     type="button"
                     className="btn btn-dark px-4 px-sm-5"
                   >
-                    {(this.props as any).t("View All")}
+                    {this.props.t("View All")}
                   </button>
                 </div>
               </div>
